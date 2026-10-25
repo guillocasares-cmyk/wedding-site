@@ -571,6 +571,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .cal-btn{display:inline-block;background:var(--pink);color:#fff;text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:11px 22px;border-radius:999px;transition:background .15s;}
 .cal-btn:hover,.cal-btn:focus-visible{background:var(--pink-dark);outline:none;}
 .cal-alt{font-size:12px;color:#8a6d7c;text-decoration:underline;}
+
+#photo-msg{position:static;left:auto;right:auto;top:auto;}
+@keyframes thanks-pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+#photo-msg.ok:not(:empty){margin-top:16px;padding:14px 18px;border-radius:14px;background:#E6F3EA;color:#1F7A47;font-size:18px;font-weight:600;line-height:1.3;max-width:340px;animation:thanks-pop .4s ease-out;}
 </style>
 </head>
 <body>
@@ -696,7 +700,7 @@ const i18n = {
     "photowall.needname": "Escribe tu nombre para que sepamos quién subió las fotos.",
     "photowall.err.inapp": "No se pudo subir. Si abriste el sitio desde una app (Instagram, Facebook...), ábrelo en Safari o Chrome e inténtalo de nuevo.",
     "photowall.partial": "Se subieron {n} de {m} fotos. Prueba otra vez con el resto.",
-    "photowall.done": "¡Gracias! Tus fotos ya están en nuestro álbum.",
+    "photowall.done": "¡Gracias por compartir tus fotos con nosotros!",
     "photowall.sending": "Subiendo la foto {n} de {m}…",
     "hero.venue": "Mas Les Lloses",
     "bunny.d6.v": "Detalles listos para girar, porque siempre ha sido bailarina",
@@ -853,7 +857,7 @@ const i18n = {
     "cal.btn": "Agregar al calendario",
     "cal.title": "Boda de Xanne y Guillo",
     "cal.details": "Nuestra boda en Valencia, España. Más información en https://wedding-site-alpha-ashen.vercel.app",
-    "photowall.limit": "Puedes subir hasta 10 fotos a la vez. ¿No las encuentras en tu celular? Mándalas a nuestro correo de la boda:",
+    "photowall.limit": "Puedes subir hasta 10 fotos cada vez que lo hagas (¡puedes repetirlo las veces que quieras!). ¿No las encuentras en tu celular? Mándalas a nuestro correo de la boda:",
     "monkey.title": "Por qué Monkey es tan mexicano",
     "monkey.intro": "Ha vivido en 7 países y aun así se identifica 100% como mexicano. Aquí las pruebas.",
     "monkey.btn": "¿Curiosidad por los detalles de Monkey?",
@@ -870,7 +874,7 @@ const i18n = {
     "nav.alebrije": "Nuestros alebrijes",
     "nav.faq": "Preguntas",
     "nav.contact": "Contacto",
-    "cal.other": "¿Outlook u otro? Descarga el .ics",
+    "cal.other": "¿Apple Calendar, Outlook u otro? Descarga el .ics",
     "photowall.go": "Enviar fotos",
     "footer.text": "Con cariño, Xanne & Guillo · Valencia, 2027",
     "footer.contact": "¿Dudas? Escríbenos a"
@@ -888,7 +892,7 @@ const i18n = {
     "photowall.needname": "Please add your name so we know who shared the photos.",
     "photowall.err.inapp": "Could not upload. If you opened this page inside an app (Instagram, Facebook...), open it in Safari or Chrome and try again.",
     "photowall.partial": "{n} of {m} photos made it. Please try the rest again.",
-    "photowall.done": "Thank you! Your photos are in our album.",
+    "photowall.done": "Thank you for sharing your pictures with us!",
     "photowall.sending": "Uploading photo {n} of {m}…",
     "hero.venue": "Mas Les Lloses",
     "bunny.d6.v": "Twirl-ready details, because she has always been a dancer",
@@ -1045,7 +1049,7 @@ const i18n = {
     "cal.btn": "Add to calendar",
     "cal.title": "Xanne & Guillo's wedding",
     "cal.details": "Our wedding in Valencia, Spain. More info at https://wedding-site-alpha-ashen.vercel.app",
-    "photowall.limit": "You can upload up to 10 pictures at a time. Can't find them on your phone? Feel free to send them to our wedding email:",
+    "photowall.limit": "You can upload up to 10 pictures each time you go through it (feel free to come back as often as you like!). Can't find them on your phone? Send them to our wedding email:",
     "monkey.title": "Why the Monkey is so Mexican",
     "monkey.intro": "He has lived in 7 countries and still identifies as 100% Mexican. Here is the evidence.",
     "monkey.btn": "Curious about the Monkey's details?",
@@ -1062,7 +1066,7 @@ const i18n = {
     "nav.alebrije": "Our alebrijes",
     "nav.faq": "FAQ",
     "nav.contact": "Contact",
-    "cal.other": "Outlook or other? Download the .ics",
+    "cal.other": "Apple Calendar, Outlook or other? Download the .ics",
     "photowall.go": "Send photos",
     "footer.text": "With love, Xanne & Guillo · Valencia, 2027",
     "footer.contact": "Questions? Email us at"
@@ -1080,7 +1084,7 @@ const i18n = {
     "photowall.needname": "Vul je naam in zodat we weten van wie de foto's zijn.",
     "photowall.err.inapp": "Uploaden mislukt. Heb je de pagina via een app geopend (Instagram, Facebook...)? Open hem dan in Safari of Chrome en probeer het opnieuw.",
     "photowall.partial": "{n} van {m} foto's gelukt. Probeer de rest nog eens.",
-    "photowall.done": "Bedankt! Je foto's staan in ons album.",
+    "photowall.done": "Bedankt voor het delen van je foto's met ons!",
     "photowall.sending": "Foto {n} van {m} uploaden…",
     "hero.venue": "Mas Les Lloses",
     "bunny.d6.v": "Draaiende details, want ze is altijd al een danseres geweest",
@@ -1237,7 +1241,7 @@ const i18n = {
     "cal.btn": "Zet in je agenda",
     "cal.title": "Bruiloft van Xanne & Guillo",
     "cal.details": "Onze bruiloft in Valencia, Spanje. Meer info op https://wedding-site-alpha-ashen.vercel.app",
-    "photowall.limit": "Je kunt tot 10 foto's tegelijk uploaden. Kun je ze niet vinden op je telefoon? Stuur ze gerust naar ons bruiloftsmailadres:",
+    "photowall.limit": "Je kunt elke keer tot 10 foto's uploaden (kom gerust zo vaak terug als je wilt!). Kun je ze niet vinden op je telefoon? Stuur ze naar ons bruiloftsmailadres:",
     "monkey.title": "Waarom Monkey zo Mexicaans is",
     "monkey.intro": "Hij heeft in 7 landen gewoond en voelt zich nog steeds 100% Mexicaans. Hier is het bewijs.",
     "monkey.btn": "Benieuwd naar de details van Monkey?",
@@ -1254,7 +1258,7 @@ const i18n = {
     "nav.alebrije": "Onze alebrijes",
     "nav.faq": "FAQ",
     "nav.contact": "Contact",
-    "cal.other": "Outlook of anders? Download de .ics",
+    "cal.other": "Apple Agenda, Outlook of anders? Download de .ics",
     "photowall.go": "Foto's versturen",
     "footer.text": "Liefs, Xanne & Guillo · Valencia, 2027",
     "footer.contact": "Vragen? Mail ons op"
@@ -1693,7 +1697,7 @@ document.querySelectorAll('.pc-section .pc-back').forEach(el=>io.observe(el));
   const t = k => (i18n[currentLang()] || i18n.es)[k] || '';
   const enc = encodeURIComponent;
   const LOC = 'Mas Les Lloses, Valencia, España';
-  const apple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const apple = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); /* iPhone and iPad only */
   const esc = x => String(x).replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
   function build(){
     const title = t('cal.title'), det = t('cal.details');
@@ -1704,10 +1708,10 @@ document.querySelectorAll('.pc-section .pc-back').forEach(el=>io.observe(el));
     const gcal = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + enc(title) + '&dates=20270910/20270911&details=' + enc(det) + '&location=' + enc(LOC);
     alt.href = icsUri;
     if(apple){
-      /* iPhone, iPad and Mac: the .ics opens straight in Apple Calendar */
+      /* iPhone and iPad: the .ics opens straight in the Calendar app */
       main.href = icsUri; main.setAttribute('download', 'xanne-guillo-wedding.ics'); main.removeAttribute('target'); alt.hidden = true;
     }else{
-      /* Android and everything else: Google Calendar; the .ics link below covers Outlook and others */
+      /* Computers open Google Calendar in the browser; Android opens its Calendar app; the .ics link below covers Apple Calendar, Outlook and others */
       main.href = gcal; main.removeAttribute('download'); main.target = '_blank'; main.rel = 'noopener'; alt.hidden = false;
     }
   }
