@@ -873,7 +873,7 @@ const i18n = {
     "playlist.remove": "Quitar",
     "playlist.full": "¡Ya son 5! Toca «Agregar a la playlist».",
     "playlist.sending": "Agregando…",
-    "playlist.done": "¡Listo, gracias! ¿Quieres agregar más? Vuelve cuando quieras.",
+    "playlist.done": "¡Listo, gracias! ¿Quieres agregar más? Solo busca otra canción.",
     "playlist.needsong": "Elige al menos una canción.",
     "faq.eyebrow": "Preguntas frecuentes",
     "faq.title": "Todo lo que debes saber",
@@ -1075,7 +1075,7 @@ const i18n = {
     "playlist.remove": "Remove",
     "playlist.full": "That's 5! Tap “Add to playlist”.",
     "playlist.sending": "Adding…",
-    "playlist.done": "All set, thank you! Want to add more? Come back anytime.",
+    "playlist.done": "All set, thank you! Want to add more? Just search for another song.",
     "playlist.needsong": "Pick at least one song.",
     "faq.eyebrow": "FAQ",
     "faq.title": "Everything you need to know",
@@ -1277,7 +1277,7 @@ const i18n = {
     "playlist.remove": "Verwijderen",
     "playlist.full": "Dat zijn er 5! Tik op “Toevoegen aan playlist”.",
     "playlist.sending": "Bezig met toevoegen…",
-    "playlist.done": "Klaar, bedankt! Wil je er meer toevoegen? Kom gerust nog eens terug.",
+    "playlist.done": "Klaar, bedankt! Wil je er meer toevoegen? Zoek gewoon nog een nummer.",
     "playlist.needsong": "Kies minstens één nummer.",
     "faq.eyebrow": "Veelgestelde vragen",
     "faq.title": "Alles wat je moet weten",
@@ -1452,8 +1452,8 @@ const plLink=document.getElementById('playlist-link'); if(plLink) plLink.href = 
     }
     busy=false; send.disabled=false;
     if(failed){ say(failed,'err'); renderPicked(); return; }
-    q.value=''; q.disabled=true; list.textContent=''; renderPicked();
-    say('playlist.done','ok'); if(hint) hint.hidden=true;
+    q.value=''; q.disabled=false; list.textContent=''; renderPicked();
+    say('playlist.done','ok'); if(hint) hint.hidden=false;
   }
   send.addEventListener('click',sendAll);
   async function search(){
