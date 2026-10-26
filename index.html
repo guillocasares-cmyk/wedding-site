@@ -585,6 +585,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .cal-btn:hover,.cal-btn:focus-visible{background:var(--pink);color:#fff;outline:none;}
 .cal-alt{font-size:12px;color:#8a6d7c;text-decoration:underline;}
 
+/* phone: big floating RSVP button that turns the card */
+.flip-fab{display:none;}
+@media (max-width:760px) and (prefers-reduced-motion:no-preference){
+  .flip-fab{display:block;position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;border:0;border-radius:999px;background:var(--pink);color:#fff;font-family:'Jost',sans-serif;font-size:17px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:16px 34px;box-shadow:0 10px 26px rgba(209,6,90,.45);cursor:pointer;white-space:nowrap;transition:opacity .25s,transform .25s;animation:fabPulse 2.4s ease-in-out infinite;}
+  .flip-fab.off{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(16px);animation:none;}
+}
+@keyframes fabPulse{0%,100%{box-shadow:0 10px 26px rgba(209,6,90,.45)}50%{box-shadow:0 10px 26px rgba(209,6,90,.45),0 0 0 9px rgba(209,6,90,.16)}}
+
 #photo-msg{position:static;left:auto;right:auto;top:auto;}
 @keyframes thanks-pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
 #photo-msg.ok:not(:empty){margin-top:16px;padding:14px 18px;border-radius:14px;background:#E6F3EA;color:#1F7A47;font-size:18px;font-weight:600;line-height:1.3;max-width:340px;animation:thanks-pop .4s ease-out;}
@@ -594,6 +602,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 <div class="langbar"><div class="wrap topbar-row"><div class="brandmark"><span class="monogram stampimg" role="img" aria-label="Xanne and Guillo, Valencia 2027 postage stamp"></span><span class="brand-text">Xanne &amp; Guillo</span></div>
 <div class="langswitch"><button data-lang="es" class="active">ES</button><button data-lang="en">EN</button><button data-lang="nl">NL</button></div></div>
 <nav class="sitenav"><a class="nav-rsvp" href="#details" data-i18n="nav.rsvp"></a><a href="#story" data-i18n="nav.story"></a><a href="#alebrije" data-i18n="nav.alebrije"></a><a href="#valencia" data-i18n="nav.valencia"></a><a href="#gallery" data-i18n="nav.gallery"></a><a href="#photowall" data-i18n="nav.photos"></a><a href="#playlist" data-i18n="nav.playlist"></a><a href="#faq" data-i18n="nav.faq"></a><a href="#contact" data-i18n="nav.contact"></a></nav></div>
+<button type="button" class="flip-fab off" id="flip-fab" data-i18n="hero.fab"></button>
 <div class="flip-scroll" id="flip">
   <span id="details" class="anchor"></span>
   <div class="flip-stick">
@@ -791,6 +800,7 @@ const i18n = {
     "hero.invite": "Queremos invitarte personalmente a nuestra boda",
     "hero.front.line": "Valencia, España · 10 de septiembre de 2027",
     "hero.hint": "Desliza o toca para voltear",
+    "hero.fab": "Confirmar asistencia",
     "hero.dear": "Queridos amigos y familia,",
     "hero.to": "Para:",
     "hero.to.v": "Nuestra gente favorita",
@@ -992,6 +1002,7 @@ const i18n = {
     "hero.invite": "We want to personally invite you to our wedding",
     "hero.front.line": "Valencia, Spain · 10 September 2027",
     "hero.hint": "Scroll or tap to turn the card",
+    "hero.fab": "RSVP here",
     "hero.dear": "Dear friends and family,",
     "hero.to": "To:",
     "hero.to.v": "Our favourite people",
@@ -1193,6 +1204,7 @@ const i18n = {
     "hero.invite": "We nodigen je graag persoonlijk uit voor onze bruiloft!",
     "hero.front.line": "Valencia, Spanje · 10 september 2027",
     "hero.hint": "Scroll of tik om de kaart te draaien",
+    "hero.fab": "Reageer hier",
     "hero.dear": "Lieve vrienden en familie,",
     "hero.to": "Aan:",
     "hero.to.v": "Onze favoriete mensen",
@@ -1595,12 +1607,32 @@ const flipHint = document.getElementById('flip-hint');
 const tapMQ = window.matchMedia('(max-width:760px) and (prefers-reduced-motion:no-preference)');
 let flippedState = false;
 let flipLockUntil = 0;
+const flipFab = document.getElementById('flip-fab');
+function fabUpdate(){
+  if(!flipFab) return;
+  const r = flipCard.getBoundingClientRect();
+  const show = tapMQ.matches && !flippedState && r.bottom > 140 && r.top < window.innerHeight - 140;
+  flipFab.classList.toggle('off', !show);
+}
 function setFlipped(v, quiet){
   flippedState = v; flipCard.classList.toggle('flipped', v);
   flipLockUntil = Date.now() + 1100;
+  fabUpdate();
   if(!quiet) setTimeout(() => flipCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  setTimeout(() => { if(tapMQ.matches){ autoFlip(); fabUpdate(); } }, 1150);
 }
-tapMQ.addEventListener && tapMQ.addEventListener('change', () => { flipCard.classList.remove('flipped'); flippedState = false; flipCard.style.transform = ''; updateFlip(); });
+function cardInto(){
+  const top = flipCard.getBoundingClientRect().top + window.scrollY - navEl.offsetHeight;
+  return window.scrollY - top;
+}
+let wantAlign = false;
+function autoFlip(){
+  if(!tapMQ.matches || Date.now() < flipLockUntil) return;
+  const into = cardInto();
+  if(!flippedState && into > 90){ wantAlign = into < flipCard.offsetHeight * .6; setFlipped(true, true); }
+  else if(flippedState && into < -90){ wantAlign = false; setFlipped(false, true); }
+}
+tapMQ.addEventListener && tapMQ.addEventListener('change', () => { flipCard.classList.remove('flipped'); flippedState = false; flipCard.style.transform = ''; updateFlip(); fabUpdate(); });
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function ease(t){ return t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
 let gliding = false, glideRaf = 0;
@@ -1656,20 +1688,22 @@ window.addEventListener('scroll', () => {
     }
   }, 160);
 }, { passive: true });
-/* phone: the card turns by itself once the guest scrolls down into it (and turns back when they return to the top) */
+/* phone: the card turns by itself as soon as the guest scrolls down into it, however fast; a big button does it with one tap */
 (function(){
   let t = 0, touching = false;
   window.addEventListener('touchstart', () => { touching = true; }, { passive: true });
   window.addEventListener('touchend', () => { touching = false; }, { passive: true });
   window.addEventListener('touchcancel', () => { touching = false; }, { passive: true });
-  function check(){
-    if(!tapMQ.matches || touching || Date.now() < flipLockUntil) return;
-    const top = flipCard.getBoundingClientRect().top + window.scrollY - navEl.offsetHeight;
-    const into = window.scrollY - top;
-    if(!flippedState && into > 90 && into < flipCard.offsetHeight * .7) setFlipped(true);
-    else if(flippedState && into < -90) setFlipped(false, true);
+  function settle(){
+    if(touching){ t = setTimeout(settle, 200); return; }
+    autoFlip(); fabUpdate();
+    if(wantAlign && flippedState && Math.abs(cardInto() + 6) > 40 && cardInto() < flipCard.offsetHeight * .6){ flipCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    wantAlign = false;
   }
-  window.addEventListener('scroll', () => { if(!tapMQ.matches) return; clearTimeout(t); t = setTimeout(check, 160); }, { passive: true });
+  window.addEventListener('scroll', () => { if(!tapMQ.matches) return; autoFlip(); fabUpdate(); clearTimeout(t); t = setTimeout(settle, 180); }, { passive: true });
+  window.addEventListener('resize', fabUpdate);
+  if(flipFab) flipFab.addEventListener('click', () => setFlipped(true));
+  fabUpdate();
 })();
 document.querySelectorAll('.front img,.pc-photo img').forEach(i => { i.draggable = false; });
 flipHint.addEventListener('click', turnCard);
