@@ -609,7 +609,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
               <div><dt data-i18n="hero.what.l"></dt><dd data-i18n="hero.what.v"></dd></div>
               <div><dt data-i18n="hero.where.l"></dt><dd><span class="where-main" data-i18n="hero.where.v"></span><a class="venue" href="https://maps.app.goo.gl/JuZhzAhUiTaCvn4q7" target="_blank" rel="noopener" data-i18n="hero.venue"></a><span class="venue-sub" data-i18n="hero.venue.sub"></span></dd></div>
               <div><dt data-i18n="hero.when.l"></dt><dd><span data-i18n="hero.when.v"></span></dd></div>
-            </dl><div class="cal-row"><a class="cal-btn" id="cal-main" href="#" data-i18n="cal.btn"></a><a class="cal-alt" id="cal-ics" href="#" download="xanne-guillo-wedding.ics" data-i18n="cal.other"></a></div>
+            </dl><div class="cal-row"><a class="cal-btn" id="cal-main" href="#" data-i18n="cal.btn"></a><a class="cal-alt" id="cal-ics" href="#"></a></div>
           </div>
           <div class="pc-side"><div class="pc-top"><svg class="postmark" viewBox="0 0 220 120" aria-hidden="true"><defs><path id="pm1" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs><g fill="none" stroke="#332A2C" stroke-width="1.6" opacity=".5"><circle cx="60" cy="60" r="52"/><circle cx="60" cy="60" r="30"/><path d="M118,38 Q132,30 146,38 T174,38 T202,38"/><path d="M118,56 Q132,48 146,56 T174,56 T202,56"/><path d="M118,74 Q132,66 146,74 T174,74 T202,74"/></g><text font-family="'Jost',sans-serif" font-size="9.5" letter-spacing="2.2" fill="#332A2C" opacity=".55"><textPath href="#pm1">VALENCIA · 10 SEP 2027 · ESPAÑA ·</textPath></text></svg><span class="pstamp stampimg" role="img" aria-label="Xanne and Guillo, Valencia 2027 postage stamp"></span></div>
             <form class="rsvp-form" id="rsvp-form" novalidate>
@@ -875,6 +875,7 @@ const i18n = {
     "nav.faq": "Preguntas",
     "nav.contact": "Contacto",
     "cal.other": "¿Apple Calendar, Outlook u otro? Descarga el .ics",
+    "cal.google": "¿Usas Google Calendar? Agrégala ahí",
     "photowall.go": "Enviar fotos",
     "footer.text": "Con cariño, Xanne & Guillo · Valencia, 2027",
     "footer.contact": "¿Dudas? Escríbenos a"
@@ -1067,6 +1068,7 @@ const i18n = {
     "nav.faq": "FAQ",
     "nav.contact": "Contact",
     "cal.other": "Apple Calendar, Outlook or other? Download the .ics",
+    "cal.google": "Use Google Calendar instead",
     "photowall.go": "Send photos",
     "footer.text": "With love, Xanne & Guillo · Valencia, 2027",
     "footer.contact": "Questions? Email us at"
@@ -1259,6 +1261,7 @@ const i18n = {
     "nav.faq": "FAQ",
     "nav.contact": "Contact",
     "cal.other": "Apple Agenda, Outlook of anders? Download de .ics",
+    "cal.google": "Google Agenda gebruiken",
     "photowall.go": "Foto's versturen",
     "footer.text": "Liefs, Xanne & Guillo · Valencia, 2027",
     "footer.contact": "Vragen? Mail ons op"
@@ -1697,22 +1700,20 @@ document.querySelectorAll('.pc-section .pc-back').forEach(el=>io.observe(el));
   const t = k => (i18n[currentLang()] || i18n.es)[k] || '';
   const enc = encodeURIComponent;
   const LOC = 'Mas Les Lloses, Valencia, España';
-  const apple = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); /* iPhone and iPad only */
-  const esc = x => String(x).replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const apple = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   function build(){
     const title = t('cal.title'), det = t('cal.details');
-    const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Xanne and Guillo//Wedding//EN','CALSCALE:GREGORIAN','BEGIN:VEVENT',
-      'UID:wedding-20270910@xanne-guillo','DTSTAMP:20261025T000000Z','DTSTART;VALUE=DATE:20270910','DTEND;VALUE=DATE:20270911',
-      'SUMMARY:' + esc(title),'LOCATION:' + esc(LOC),'DESCRIPTION:' + esc(det),'END:VEVENT','END:VCALENDAR'].join('\r\n');
-    const icsUri = 'data:text/calendar;charset=utf-8,' + enc(ics);
+    const icsUrl = '/calendar.ics?lang=' + currentLang();
     const gcal = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + enc(title) + '&dates=20270910/20270911&details=' + enc(det) + '&location=' + enc(LOC);
-    alt.href = icsUri;
+    main.removeAttribute('download'); alt.removeAttribute('download'); alt.hidden = false;
     if(apple){
-      /* iPhone and iPad: the .ics opens straight in the Calendar app */
-      main.href = icsUri; main.setAttribute('download', 'xanne-guillo-wedding.ics'); main.removeAttribute('target'); alt.hidden = true;
+      /* iPhone and iPad: a real .ics address opens the native Add to Calendar sheet; Google is the second choice */
+      main.href = icsUrl; main.removeAttribute('target');
+      alt.href = gcal; alt.target = '_blank'; alt.rel = 'noopener'; alt.textContent = t('cal.google');
     }else{
-      /* Computers open Google Calendar in the browser; Android opens its Calendar app; the .ics link below covers Apple Calendar, Outlook and others */
-      main.href = gcal; main.removeAttribute('download'); main.target = '_blank'; main.rel = 'noopener'; alt.hidden = false;
+      /* Computers and Android: Google Calendar; the .ics covers Apple Calendar, Outlook and others */
+      main.href = gcal; main.target = '_blank'; main.rel = 'noopener';
+      alt.href = icsUrl; alt.removeAttribute('target'); alt.textContent = t('cal.other');
     }
   }
   build();
