@@ -581,8 +581,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 .sitenav a.nav-rsvp{opacity:1;background:var(--pink);color:#fff;font-weight:700;letter-spacing:.14em;padding:7px 18px;border-radius:999px;border-bottom:0;margin-right:4px;transition:background .15s;}
 .sitenav a.nav-rsvp:hover{background:var(--pink-dark);}
 .cal-row{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:clamp(10px,1.6vw,16px);}
-.cal-btn{display:inline-block;background:var(--pink);color:#fff;text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:11px 22px;border-radius:999px;transition:background .15s;}
-.cal-btn:hover,.cal-btn:focus-visible{background:var(--pink-dark);outline:none;}
+.cal-btn{display:inline-block;background:transparent;color:var(--pink-dark);border:1.5px solid var(--pink);text-decoration:none;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border-radius:999px;transition:background .15s,color .15s;}
+.cal-btn:hover,.cal-btn:focus-visible{background:var(--pink);color:#fff;outline:none;}
 .cal-alt{font-size:12px;color:#8a6d7c;text-decoration:underline;}
 
 #photo-msg{position:static;left:auto;right:auto;top:auto;}
@@ -790,7 +790,7 @@ const i18n = {
     "hero.tag": "Guarda la fecha",
     "hero.invite": "Queremos invitarte personalmente a nuestra boda",
     "hero.front.line": "Valencia, España · 10 de septiembre de 2027",
-    "hero.hint": "Toca para voltear",
+    "hero.hint": "Desliza o toca para voltear",
     "hero.dear": "Queridos amigos y familia,",
     "hero.to": "Para:",
     "hero.to.v": "Nuestra gente favorita",
@@ -991,7 +991,7 @@ const i18n = {
     "hero.tag": "Save the date",
     "hero.invite": "We want to personally invite you to our wedding",
     "hero.front.line": "Valencia, Spain · 10 September 2027",
-    "hero.hint": "Tap to turn the card over",
+    "hero.hint": "Scroll or tap to turn the card",
     "hero.dear": "Dear friends and family,",
     "hero.to": "To:",
     "hero.to.v": "Our favourite people",
@@ -1192,7 +1192,7 @@ const i18n = {
     "hero.tag": "Save the date",
     "hero.invite": "We nodigen je graag persoonlijk uit voor onze bruiloft!",
     "hero.front.line": "Valencia, Spanje · 10 september 2027",
-    "hero.hint": "Tik om de kaart om te draaien",
+    "hero.hint": "Scroll of tik om de kaart te draaien",
     "hero.dear": "Lieve vrienden en familie,",
     "hero.to": "Aan:",
     "hero.to.v": "Onze favoriete mensen",
@@ -1594,9 +1594,11 @@ const flipCard = document.getElementById('flip-card');
 const flipHint = document.getElementById('flip-hint');
 const tapMQ = window.matchMedia('(max-width:760px) and (prefers-reduced-motion:no-preference)');
 let flippedState = false;
-function setFlipped(v){
+let flipLockUntil = 0;
+function setFlipped(v, quiet){
   flippedState = v; flipCard.classList.toggle('flipped', v);
-  setTimeout(() => flipCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  flipLockUntil = Date.now() + 1100;
+  if(!quiet) setTimeout(() => flipCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
 }
 tapMQ.addEventListener && tapMQ.addEventListener('change', () => { flipCard.classList.remove('flipped'); flippedState = false; flipCard.style.transform = ''; updateFlip(); });
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1654,6 +1656,21 @@ window.addEventListener('scroll', () => {
     }
   }, 160);
 }, { passive: true });
+/* phone: the card turns by itself once the guest scrolls down into it (and turns back when they return to the top) */
+(function(){
+  let t = 0, touching = false;
+  window.addEventListener('touchstart', () => { touching = true; }, { passive: true });
+  window.addEventListener('touchend', () => { touching = false; }, { passive: true });
+  window.addEventListener('touchcancel', () => { touching = false; }, { passive: true });
+  function check(){
+    if(!tapMQ.matches || touching || Date.now() < flipLockUntil) return;
+    const top = flipCard.getBoundingClientRect().top + window.scrollY - navEl.offsetHeight;
+    const into = window.scrollY - top;
+    if(!flippedState && into > 90 && into < flipCard.offsetHeight * .7) setFlipped(true);
+    else if(flippedState && into < -90) setFlipped(false, true);
+  }
+  window.addEventListener('scroll', () => { if(!tapMQ.matches) return; clearTimeout(t); t = setTimeout(check, 160); }, { passive: true });
+})();
 document.querySelectorAll('.front img,.pc-photo img').forEach(i => { i.draggable = false; });
 flipHint.addEventListener('click', turnCard);
 const frontFace = flipCard.querySelector('.front');
